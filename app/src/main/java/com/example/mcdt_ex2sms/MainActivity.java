@@ -11,39 +11,48 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
+    Button btnSendSMS;
     EditText txtPhoneNo;
     EditText txtMessage;
 
+    /** Called when the activity is first created. */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.btnSendSMS).setOnClickListener(this);
+        btnSendSMS = (Button) findViewById(R.id.btnSendSMS);
         txtPhoneNo = (EditText) findViewById(R.id.txtPhoneNo);
         txtMessage = (EditText) findViewById(R.id.txtMessage);
 
+        btnSendSMS.setOnClickListener(new View.OnClickListener()
+        {
+
+
+            @Override
+            public void onClick(View v)
+            {
+                String phoneNo = txtPhoneNo.getText().toString();
+                String message = txtMessage.getText().toString();
+                if (phoneNo.length()>0 && message.length()>0)
+                    sendSMS(phoneNo, message);
+                else
+                    Toast.makeText(getBaseContext(),
+                            "Please enter both phone number and message.",
+                            Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if(id == R.id.btnSendSMS){
-            String phoneNo = txtPhoneNo.getText().toString();
-            String message = txtMessage.getText().toString();
-            if(phoneNo.length()>0 && message.length()>0){
-                sendSMS(phoneNo, message);
-            }
-            else {
-                Toast.makeText(this, "Please enter both phone number and message.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+    //---sends an SMS message to another device---
+    //---sends an SMS message to another device---
     private void sendSMS(String phoneNumber, String message)
     {
         String SENT = "SMS_SENT";
@@ -106,4 +115,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
     }
+
+
 }
